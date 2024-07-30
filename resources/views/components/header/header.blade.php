@@ -31,4 +31,12 @@
     .breadcrumb .breadcrumb-item+.breadcrumb-item::before {
         content: none;
     }
+
+    .form-control {
+        border-color: #666 !important;
+    }
+
+    .is-invalid {
+        border-color: red !important;
+    }
 </style>
