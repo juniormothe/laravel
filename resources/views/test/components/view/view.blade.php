@@ -1,36 +1,53 @@
 @php
-    $module = $module ? $module : null;
-    $view = $view ? $view : null;
-    $data = $data ? $data : null;
+    $m = $m ? $m : false;
+    $w = $w ? $w : false;
+    $f = $f ? $f : false;
+    $page = $page ? $page : false;
+    $route = $route ? $route : false;
+    $view = $view ? $view : false;
+    $data = $data ? $data : false;
 @endphp
-
-@if ($data)
-    @switch($module)
-        @case('view')
-            @component($view . '.components.view.details', [
-                'data' => $data,
-            ])
-            @endcomponent
-        @break
-
-        @case('edit')
-            @component($view . '.components.view.edit', [
-                'data' => $data,
-            ])
-            @endcomponent
-        @break
-
-        @case('delete')
-            @component($view . '.components.view.delete', [
-                'data' => $data,
-            ])
-            @endcomponent
-        @break
-    @endswitch
-@else
-    <div class="row">
-        <div class="col-12 text-center">
-            Nenhum item encontrado!
+<div class="row">
+    @if ($data)
+        <div class="col-12 mb-1">
+            {{ Str::upper($data->name) }}
         </div>
-    </div>
-@endif
+        <div class="col-12 mb-3">
+            <hr style="margin: 0px">
+        </div>
+        @switch($m)
+            @case('view')
+                <div class="col-12">
+                    @component($view . '.components.view.details', [
+                        'data' => $data,
+                    ])
+                    @endcomponent
+                </div>
+            @break
+
+            @case('edit')
+                <div class="col-12">
+                    @livewire('test.insert-update', [
+                        'route' => $route,
+                        'filter' => $f,
+                        'page' => $page,
+                        'type' => 2,
+                        'data' => $data,
+                    ])
+                </div>
+            @break
+
+            @case('delete')
+                <div class="col-12">
+                    @component($view . '.components.view.delete', [
+                        'data' => $data,
+                    ])
+                    @endcomponent
+                </div>
+            @break
+
+            @default
+        @endswitch
+    @else
+    @endif
+</div>

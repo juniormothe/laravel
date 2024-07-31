@@ -4,9 +4,8 @@ namespace App\Http\Livewire\Test;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Presentation;
-use Illuminate\Support\Str;
-use App\Helpers\Helper;
+use App\Repositories\Test\Listing;
+use App\Repositories\Test\Data;
 
 class Test extends Component
 {
@@ -14,90 +13,59 @@ class Test extends Component
 
     public $route;
     public $view;
-    public $module;
-    public $watch;
-    public $filter;
-    public $input;
-    public $data;
-    protected $queryString = ['module', 'watch', 'filter', 'page'];
-    protected $paginationTheme = 'bootstrap';
+    private $list;
+    private $data;
+    public $m;
+    public $w;
+    public $f;
 
     public function mount($route, $view)
     {
         $this->route = $route;
         $this->view = $view;
-        $this->actionModule();
-        $this->input = $this->input();
+        $this->mwf();
     }
 
     public function render()
     {
-        $this->data = ($this->watch) ? $this->data() : null;
+        $this->treatDataList();
         return view('livewire.test.test', [
-            'list' => $this->list(),
+            'list' => $this->list,
             'data' => $this->data,
         ]);
     }
 
-    public function controlModule($module, $watch = null)
+    public function controlModule($module = false, $watch = false)
     {
-        $this->module = $module;
-        $this->watch = $watch;
+        $this->m = ($module) ? $module : null;
+        $this->w = ($watch) ? $watch : null;
     }
 
-    public function insert()
+    public function delete()
     {
-        $this->validate(['input.name' => ['required']], ['required' => 'obrigatório']);
-        $this->validationExists();
-        $save = Presentation::create([
-            'status' => 1,
-            'type' => 1,
-            'name' => trim($this->input['name']),
-            'name_slug' => Str::slug(trim($this->input['name'])),
-            'amount' => 0,
-        ]);
-        if ($save->id) :
-            return redirect()->route($this->route, ['module' => 'view', 'watch' => Helper::hashIdEncode($save->id)]);
+    }
+
+    private function treatDataList()
+    {
+        if (in_array($this->m, ['insert', 'home'])) :
+            $this->list = Listing::list($this->f);
+            $this->data = false;
+        elseif (in_array($this->m, ['view', 'edit', 'delete'])) :
+            $this->list = false;
+            $this->data = Data::object($this->w);
+        else :
+            $this->list = false;
+            $this->data = false;
         endif;
     }
 
-    private function validationExists()
+    private function mwf()
     {
-        $exists = Presentation::where('type', '=', $this->input['type'])
-            ->where('name_slug', '=', Str::slug(trim($this->input['name'])))
-            ->exists();
-        if ($exists) :
-            $this->addError('input.name', 'já existe');
-            return;
-        endif;
+        $this->m = request()->input('m') ? request()->input('m') : 'home';
+        $this->w = request()->input('w') ? request()->input('w') : null;
+        $this->f = request()->input('f') ? request()->input('f') : null;
     }
 
-    private function list()
-    {
-        $types = Presentation::where('type', '=', '1')->paginate(15);
-        return $types;
-    }
-
-    private function data()
-    {
-        return Presentation::find(Helper::hashIdDecode($this->watch));
-    }
-
-    private function actionModule()
-    {
-        $this->module = request()->input('module') ? request()->input('module') : "home";
-        $this->watch = request()->input('watch') ? request()->input('watch') : null;
-        $this->filter = request()->input('filter') ? request()->input('filter') : null;
-    }
-
-    private function input()
-    {
-        return [
-            'status' => 1,
-            'type' => 1,
-            'name' => null,
-            'name_slug' => null,
-            'amount' => 0,
-        ];
-    }
+    protected $queryString = ['m', 'w', 'f', 'page'];
+    protected $paginationTheme = 'bootstrap';
 }

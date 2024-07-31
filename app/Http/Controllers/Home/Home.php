@@ -19,7 +19,7 @@ class Home extends Controller
 
     public function index()
     {
-        return view('home', [
+        return view('home.home', [
             'info' => [
                 'PHP Version' => phpversion(),
                 'Laravel Version' => App::version(),

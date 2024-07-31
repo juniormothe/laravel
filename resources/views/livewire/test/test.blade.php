@@ -2,35 +2,14 @@
     <div class="page-header row no-gutters py-4">
         <div class="col-12 text-center text-sm-left mb-0">
             <nav aria-label="breadcrumb mb-0">
-                @switch($module)
-                    @case('insert')
-                        @component($view . '.components.module.insert')
-                        @endcomponent
-                    @break
-
-                    @case('home')
-                        @component($view . '.components.module.home', [
-                            'total' => $list->total(),
-                        ])
-                        @endcomponent
-                    @break
-
-                    @case('view')
-                    @case('edit')
-
-                    @case('delete')
-                        @component($view . '.components.module.view')
-                        @endcomponent
-                    @break
-
-                    @default
-                        <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item">
-                                <h5 class="mb-0"> Title
-                                </h5>
-                            </li>
-                        </ol>
-                @endswitch
+                @component($view . '.components.page-header.header', [
+                    'm' => $m,
+                    'view' => $view,
+                    'list' => $list,
+                    'data' => $data,
+                    'title' => 'Example',
+                ])
+                @endcomponent
             </nav>
         </div>
     </div>
@@ -38,16 +17,20 @@
         <div class="col">
             <div class="card card-small mb-4">
                 <div class="card-body p-3">
-                    @switch($module)
-                        @case('home')
-                            @component($view . '.components.home.home', [
-                                'list' => $list,
+                    @switch($m)
+                        @case('insert')
+                            @livewire('test.insert-update', [
+                                'route' => $route,
+                                'filter' => $f,
+                                'page' => $page,
+                                'type' => 1,
                             ])
-                            @endcomponent
                         @break
 
-                        @case('insert')
-                            @component($view . '.components.insert.insert', [])
+                        @case('home')
+                            @component($view . '.components.list.list', [
+                                'list' => $list,
+                            ])
                             @endcomponent
                         @break
 
@@ -56,13 +39,18 @@
 
                         @case('delete')
                             @component($view . '.components.view.view', [
-                                'module' => $module,
+                                'm' => $m,
+                                'w' => $w,
+                                'f' => $f,
+                                'page' => $page,
+                                'route' => $route,
                                 'view' => $view,
                                 'data' => $data,
                             ])
                             @endcomponent
                         @break
 
+                        @default
                     @endswitch
                 </div>
             </div>
