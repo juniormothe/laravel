@@ -39,10 +39,11 @@
 
             @case('delete')
                 <div class="col-12">
-                    @component($view . '.components.view.delete', [
+                    @livewire('test.delete', [
+                        'route' => $route,
+                        'filter' => $f,
                         'data' => $data,
                     ])
-                    @endcomponent
                 </div>
             @break
 

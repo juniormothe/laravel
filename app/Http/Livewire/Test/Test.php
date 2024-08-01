@@ -41,16 +41,12 @@ class Test extends Component
         $this->w = ($watch) ? $watch : null;
     }
 
-    public function delete()
-    {
-    }
-
     private function treatDataList()
     {
-        if (in_array($this->m, ['insert', 'home'])) :
+        if ((!$this->list) && (in_array($this->m, ['insert', 'home']))) :
             $this->list = Listing::list($this->f);
             $this->data = false;
-        elseif (in_array($this->m, ['view', 'edit', 'delete'])) :
+        elseif ((!$this->data) && (in_array($this->m, ['view', 'edit', 'delete']))) :
             $this->list = false;
             $this->data = Data::object($this->w);
         else :
